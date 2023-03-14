@@ -1,8 +1,11 @@
 export function loadAllPlugins(app: any) {
-  const files = import.meta.glob('./.ts')
-//   files.keys().forEach(key => {
-    // if (typeof files(key).default === 'function') {
-    //   if (key !== './index.ts') files(key).default(app)
-    // }
-//   })
+  const files = import.meta.glob('./*.ts')
+  const keys = Object.keys(files);
+  keys.forEach(async key => {
+    const file: any = await files[key]()
+    console.log('====> files', file.default)
+    if (typeof file.default === 'function') {
+      if (key !== './index.ts') file.default(app)
+    }
+  })
 }

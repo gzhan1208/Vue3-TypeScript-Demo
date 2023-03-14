@@ -1,6 +1,7 @@
 <script lang="ts">
 import InputItem from '../components/InputItem.vue'
 import { reactive } from 'vue';
+import { useRoute, useRouter } from 'vue-router'
 interface InputData {
   [key: string]: string
 }
@@ -9,6 +10,7 @@ export default {
     InputItem,
   },
   setup() {
+    const router = useRouter();
     const form = [
       { 
         label: 'Username',
@@ -38,6 +40,9 @@ export default {
       inputData[k] = v.trim();
     }
     const submit = () => {
+      router.push({
+        path: '/Layout'
+      })
     }
     return {
       inputData,
