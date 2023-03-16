@@ -1,12 +1,14 @@
 <script lang="ts">
 import { useRoute } from 'vue-router'
 import routes from '@/router'
+import stores from '@/stores'
+import type { Store } from 'pinia'
 
 export default {
     name: 'SideBar',
     setup() {
         const route = useRoute();
-        console.log('======>', routes);
+        const permission: Store = stores.usePermissionStore()
         const handleClose = () => { }
         const handleOpen = () => { }
         return {
