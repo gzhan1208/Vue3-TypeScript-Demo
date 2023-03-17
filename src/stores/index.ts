@@ -6,7 +6,7 @@ const getStores = (files: any = {}, routesModules: any = {}) => {
     for (const key in files) {
         if (!key) continue
         const storeModule = files[key]
-        const storeKey = Object.keys(storeModule)[0]
+        const storeKey: string = Object.keys(storeModule)[0]
         const store = { [storeKey]: storeModule[storeKey] }
         routesModules = {...routesModules, ...store}
     }
@@ -17,7 +17,9 @@ const stores = getStores(storesFiles)
 
 // hot load
 if (import.meta.hot) {
-
+    for (const key in stores) {
+        import.meta.hot!.accept(acceptHMRUpdate(stores[key], import.meta.hot))
+    }
     // stores.forEach((v: any) => {
     //     import.meta.hot!.accept(acceptHMRUpdate(v, import.meta.hot))
     // })

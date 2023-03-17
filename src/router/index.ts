@@ -22,7 +22,19 @@ export const constantRoutes: Array<RouteRecordRaw> = [
     {
         path: '/Layout',
         name: 'Layout',
-        component: Layout
+        component: Layout,
+        children: [
+            {
+                path: 'dashboard',
+                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/LoginView.vue'),
+                name: 'Dashboard',
+                meta: {
+                    title: 'dashboard',
+                    icon: '#icondashboard',
+                    affix: true
+                }
+            }
+        ]
     },
     ...constantModules
 ]
