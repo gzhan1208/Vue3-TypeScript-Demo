@@ -21,7 +21,7 @@ export default {
 </script>
 
 <template>
-    <el-sub-menu v-if="item.children && item.children.length" :index="item.name">
+    <el-sub-menu v-if="item.children && item.children.length" :index="item">
         <template #title>
             <el-icon>
                 <setting />
@@ -29,7 +29,7 @@ export default {
             <span>{{ item.name }}</span>
         </template>
         <el-menu-item-group>
-            <el-menu-item v-for="route in item.children" :key="route.name" :index="route.name">
+            <el-menu-item v-for="route in item.children" :key="route.name" :index="route">
                 <el-icon>
                     <setting />
                 </el-icon>
@@ -37,7 +37,7 @@ export default {
             </el-menu-item>
         </el-menu-item-group>
     </el-sub-menu>
-    <el-menu-item v-else :index="item.name">
+    <el-menu-item v-else :index="item">
         <el-icon>
             <setting />
         </el-icon>

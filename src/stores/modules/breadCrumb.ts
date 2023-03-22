@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import type { StoreDefinition } from 'pinia'
 
-const initialState: Array<string> = ['首页']
+const initialState: Array<object> = [
+    { name: '首页', path: '/Layout' }
+]
 export const breadCrumb: StoreDefinition = defineStore({
     id: 'breadCrumb',
     state: () => ({

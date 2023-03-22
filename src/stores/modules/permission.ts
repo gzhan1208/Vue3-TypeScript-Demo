@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
-import type { StoreDefinition } from 'pinia'
+import type { StoreDefinition, StateTree } from 'pinia'
 import router, { constantRoutes, dynamicRoutes } from '@/router';
 
 const hasPermission = (roles: string[], route: RouteRecordRaw) => {
@@ -21,6 +21,14 @@ const filterRoutes = (routes: RouteRecordRaw[], roles: string[]) => {
     return res
 }
 
+const formatRoutes = (routes: RouteRecordRaw[]) => {
+    return routes.map((item: RouteRecordRaw) => ({
+        path: item.path,
+        children: item.children,
+        name: item.name,
+    }))
+}
+
 export const usePermissionStore: StoreDefinition = defineStore({
     id: 'permission',
     state: () => ({
@@ -28,16 +36,8 @@ export const usePermissionStore: StoreDefinition = defineStore({
         dynamicRoutes: [] as RouteRecordRaw[]
     }),
     getters: {
-        getRoutes: (state: any) => {
-            return state.routes.map((item: any) => ({
-                name: item,
-            }))
-        },
-        getDynamicRoutes: (state: any) => {
-            return state.dynamicRoutes.map((item: any) => ({
-                name: item,
-            }))
-        },
+        getRoutes: (state: StateTree) => formatRoutes(state.routes),
+        getDynamicRoutes: (state: StateTree) => formatRoutes(state.dynamicRoutes),
     },
     actions: {
         setRoutes(roles: string[]) {

@@ -28,7 +28,7 @@
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
-  --color-background-grey-1: var(--vt-c-grey-1)
+  --color-background-grey-1: var(--vt-c-grey-1);
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);

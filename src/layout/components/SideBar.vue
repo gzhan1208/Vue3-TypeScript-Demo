@@ -1,10 +1,10 @@
 <script lang="ts">
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
+import type {RouteRecordRaw} from 'vue-router'
 import routes from '@/router'
 import stores from '@/stores'
 import BarItem from '@/layout/components/BarItem.vue'
-import {breadCrumb} from "@/stores/modules/breadCrumb";
 
 export default {
     name: 'SideBar',
@@ -14,54 +14,51 @@ export default {
     setup() {
         const route = useRoute();
         const router = useRouter();
-        const selected = ref('')
         const permission = (stores.usePermissionStore)()
         const breads = (stores.breadCrumb)()
-        const handleClose = (index, indexPath) => {
-            // console.log('=====>> close', index)
-            // console.log('=====>> close', indexPath)
-        }
-        const handleOpen = (index, indexPath) => {
-            // console.log('=====>> open', index)
-            // console.log('=====>> open', indexPath)
-        }
-        const handleSelect = (index, indexPath, item, routeResult) => {
-            router.push({ path: `/${index}` })
+        const tabViews = (stores.tabViewsStore)()
+
+        const activeIndex = ref('/Layout')
+        const dynamicRoutes = permission.getDynamicRoutes
+        const handleSelect = (index: RouteRecordRaw, indexPath: Array<RouteRecordRaw>,
+                              item: object, routeResult: any) => {
+            const path = `${index.path}`
+            activeIndex.value = index
+            tabViews.addTab(index)
             breads.updateBread(indexPath)
-            // console.log('=====>> select', index)
-            // console.log('=====>> select', indexPath)
+            router.push({ path })
+            // console.log('=====>> bread', bread)
+            // console.log('=====>> select', index, index.path)
             // console.log('=====>> select', item)
             // console.log('=====>> select', routeResult)
         }
-        console.log('=====>> ', permission.dynamicRoutes)
+        // console.log('=====>> ', permission.getDynamicRoutes)
         return {
             route,
-            handleOpen,
-            handleClose,
             handleSelect,
-            permission
+            dynamicRoutes,
+            activeIndex
         }
     }
 }
 </script>
 
 <template>
-    <div class="container">
+    <div class="bar-container">
         <div class="logo">
             <h1>Vue3 管理后台</h1>
         </div>
         <el-menu
+            :default-active="activeIndex"
             active-text-color="#ffd04b"
             background-color="#545c64"
             class="el-menu-vertical-demo"
             text-color="#fff"
             unique-opened
-            @open="handleOpen"
-            @close="handleClose"
             @select="handleSelect"
         >
             <bar-item
-                v-for="route in permission.dynamicRoutes"
+                v-for="route in dynamicRoutes"
                 :key="route.name"
                 :item="route"
             />
@@ -70,19 +67,25 @@ export default {
 </template>
 
 <style scoped>
-.container {
+.bar-container {
     /* display: flex; */
     /* justify-content: center; */
     /* padding: 0 15px; */
+    position: fixed;
+    width: 249px;
+    height: 100%;
+    /*border-right: 1px solid var(--color-background-grey-1);*/
+    box-shadow: 0 1px 1px #888;
+    /*overflow: hidden;*/
 }
 
 .logo {
     display: flex;
     flex: 1;
     justify-content: center;
-    height: 75px;
+    height: 85px;
     align-items: center;
-    border-bottom: 1px solid #666;
+    box-shadow: 0 0 1px #888;
 }
 
 .logo h1 {
