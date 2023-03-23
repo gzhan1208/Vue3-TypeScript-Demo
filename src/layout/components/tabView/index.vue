@@ -1,23 +1,35 @@
 <script setup lang="ts">
 import {toRaw} from 'vue';
 import {useRouter} from 'vue-router'
+import type {RouteRecordRaw} from 'vue-router'
 import stores from '@/stores'
 
 const tabViews = stores.tabViewsStore()
 const tabsValue = toRaw(tabViews.tabsValue)
+const permission = (stores.usePermissionStore)()
+const breads = (stores.breadCrumb)()
 
 const router = useRouter();
+
+const getCompletePath = (v) => v.reduce((a: string, b: RouteRecordRaw) => a + b.path, '')
 const handleClick = (v: any) => {
     const d = toRaw(v.props)
     const path = d.name
-    path && router.push(path)
+    const item = tabsValue.find(v => v.path === path)
+    const completePath = getCompletePath(item.tabs)
+    permission.setCurrentRoute(completePath || '')
+    breads.updateBread(item.tabs)
+    router.push(path)
 }
 const removeTab = (v: string) => {
     const i = tabsValue.findIndex(item => item.path === v)
-    if (!(i < 0)) {
-        tabViews.removeTab(i)
-        router.push({ path: tabsValue[i - 1].path })
-    }
+    tabViews.removeTab(i)
+    const tabValue = tabsValue[i - 1]
+    const path = tabValue.path
+    const completePath = getCompletePath(tabValue.tabs)
+    permission.setCurrentRoute(completePath)
+    breads.updateBread(tabValue.tabs)
+    router.push(path)
 }
 </script>
 

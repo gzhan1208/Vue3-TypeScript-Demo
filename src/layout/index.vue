@@ -47,12 +47,14 @@ export default {
 }
 .content {
     margin-left: 250px;
-    min-height: calc(100vh - 50px);
 }
 .app-main {
-    width: 100%;
-    padding: 0 15px;
     position: relative;
+    width: 100%;
+    padding: 10px 15px;
+    margin-top: 5px;
     overflow: hidden;
+    min-height: calc(100vh - 90px);
+    background-color: #F2F7FF;
 }
 </style>

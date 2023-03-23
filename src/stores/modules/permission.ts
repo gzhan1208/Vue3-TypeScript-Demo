@@ -33,7 +33,8 @@ export const usePermissionStore: StoreDefinition = defineStore({
     id: 'permission',
     state: () => ({
         routes: [] as RouteRecordRaw[],
-        dynamicRoutes: [] as RouteRecordRaw[]
+        dynamicRoutes: [] as RouteRecordRaw[],
+        currentRoute: '' as string
     }),
     getters: {
         getRoutes: (state: StateTree) => formatRoutes(state.routes),
@@ -53,5 +54,8 @@ export const usePermissionStore: StoreDefinition = defineStore({
                 router.addRoute(item)
             })
         },
+        setCurrentRoute(route: string) {
+            this.currentRoute = route
+        }
     }
 })

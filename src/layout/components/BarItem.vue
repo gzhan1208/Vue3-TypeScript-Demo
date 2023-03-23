@@ -10,18 +10,12 @@ export default {
         collapse: {
             type: Boolean,
         },
-    },
-    setup() {
-
-        return {
-
-        }
     }
 }
 </script>
-
+<!-- 当前只考虑2级目录，N级则提取代码，递归遍历 -->
 <template>
-    <el-sub-menu v-if="item.children && item.children.length" :index="item">
+    <el-sub-menu v-if="item.children && item.children.length" :index="item.path">
         <template #title>
             <el-icon>
                 <setting />
@@ -29,7 +23,7 @@ export default {
             <span>{{ item.name }}</span>
         </template>
         <el-menu-item-group>
-            <el-menu-item v-for="route in item.children" :key="route.name" :index="route">
+            <el-menu-item v-for="route in item.children" :key="route.name" :index="`${item.path + route.path}`">
                 <el-icon>
                     <setting />
                 </el-icon>
@@ -37,7 +31,7 @@ export default {
             </el-menu-item>
         </el-menu-item-group>
     </el-sub-menu>
-    <el-menu-item v-else :index="item">
+    <el-menu-item v-else :index="item.path">
         <el-icon>
             <setting />
         </el-icon>

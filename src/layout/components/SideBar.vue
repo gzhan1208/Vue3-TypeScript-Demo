@@ -1,8 +1,7 @@
 <script lang="ts">
-import { ref } from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import { toRaw } from 'vue'
+import {useRouter} from 'vue-router'
 import type {RouteRecordRaw} from 'vue-router'
-import routes from '@/router'
 import stores from '@/stores'
 import BarItem from '@/layout/components/BarItem.vue'
 
@@ -12,32 +11,45 @@ export default {
         BarItem
     },
     setup() {
-        const route = useRoute();
         const router = useRouter();
         const permission = (stores.usePermissionStore)()
         const breads = (stores.breadCrumb)()
         const tabViews = (stores.tabViewsStore)()
 
-        const activeIndex = ref('/Layout')
         const dynamicRoutes = permission.getDynamicRoutes
-        const handleSelect = (index: RouteRecordRaw, indexPath: Array<RouteRecordRaw>,
-                              item: object, routeResult: any) => {
-            const path = `${index.path}`
-            activeIndex.value = index
-            tabViews.addTab(index)
-            breads.updateBread(indexPath)
-            router.push({ path })
-            // console.log('=====>> bread', bread)
-            // console.log('=====>> select', index, index.path)
-            // console.log('=====>> select', item)
-            // console.log('=====>> select', routeResult)
+
+        const findRoute = (data: any, path: string) => {
+            const arr = toRaw(data)
+            const r = arr.find((v: RouteRecordRaw) => v.path === path)
+            if (r) {
+                return r
+            }
+            arr.children && findRoute(arr.children, path)
         }
-        // console.log('=====>> ', permission.getDynamicRoutes)
+        const handleSelect = (path: string, indexPath: Array<string>) => {
+            const breadArr = []
+            const len = indexPath.length
+            const r = dynamicRoutes.find((v: RouteRecordRaw) => v.path === indexPath[0])
+            breadArr.push(r)
+            if (len > 1) {
+                for (let i = 1; i < len; i++) {
+                    if (!r.children) break
+                    const _path = indexPath[i].split('/').pop()
+                    const _r = findRoute(r.children, `/${_path}`)
+                    _r && breadArr.push(_r)
+                }
+            }
+            permission.setCurrentRoute(path)
+            tabViews.addTab(breadArr[len - 1], breadArr)
+            breads.updateBread(breadArr)
+
+            const p = path.split('/').pop()
+            router.push({ path: p })
+        }
         return {
-            route,
             handleSelect,
             dynamicRoutes,
-            activeIndex
+            permission
         }
     }
 }
@@ -49,7 +61,7 @@ export default {
             <h1>Vue3 管理后台</h1>
         </div>
         <el-menu
-            :default-active="activeIndex"
+            :default-active="permission.currentRoute"
             active-text-color="#ffd04b"
             background-color="#545c64"
             class="el-menu-vertical-demo"
@@ -68,15 +80,11 @@ export default {
 
 <style scoped>
 .bar-container {
-    /* display: flex; */
-    /* justify-content: center; */
-    /* padding: 0 15px; */
     position: fixed;
     width: 249px;
     height: 100%;
     /*border-right: 1px solid var(--color-background-grey-1);*/
     box-shadow: 0 1px 1px #888;
-    /*overflow: hidden;*/
 }
 
 .logo {
